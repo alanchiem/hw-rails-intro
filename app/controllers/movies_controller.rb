@@ -7,7 +7,7 @@ class MoviesController < ApplicationController
     end
   
     def index
-      @all_ratings = Movie.all_ratings
+      @all_ratings = ['G','PG','PG-13','R']
 
       # Pt 3. check if params[] is nil
       if params[:ratings] == nil
