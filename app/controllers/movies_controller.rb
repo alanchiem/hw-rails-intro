@@ -7,14 +7,49 @@ class MoviesController < ApplicationController
     end
   
     def index
-      @all_ratings = ['G','PG','PG-13','R']
+      @all_ratings = Movie.all_ratings
+
+      # Pt 3. check if params[] is nil
       if params[:ratings] == nil
-        @ratings_to_show = ['G','PG','PG-13','R']
+        if session[:ratings] == nil
+          @ratings_to_show = ['G','PG','PG-13','R']
+        end
+        @ratings_to_show = session[:ratings_to_show]
       else
         @ratings_to_show = params[:ratings].keys
+        session[:ratings_to_show] = @ratings_to_show
       end
       @movies = Movie.with_ratings(@ratings_to_show)
+
+      @title_highlight = "p-3 mb-2 bg-transparent text-dark"
+      @date_highlight = "p-3 mb-2 bg-transparent text-dark"
+
+
+      if params[:title_clicked]
+        @movies = @movies.order(:title)
+        @title_highlight ="p-3 mb-2 bg-warning text-dark"
+
+        session[:title_clicked] = true
+        session[:date_clicked] = false
+
+      elsif params[:date_clicked] 
+        @movies = @movies.order(:release_date).reverse_order
+        @date_highlight ="p-3 mb-2 bg-warning text-dark"
+
+        session[:date_clicked] = true
+        session[:title_clicked] = false
+
+      elsif session[:title_clicked]
+        @movies = @movies.order(:title)
+        @title_highlight ="p-3 mb-2 bg-warning text-dark"
+
+      elsif session[:date_clicked] 
+        @movies = @movies.order(:release_date).reverse_order
+        @date_highlight ="p-3 mb-2 bg-warning text-dark"
       
+      end 
+      
+
     end
   
     def new
